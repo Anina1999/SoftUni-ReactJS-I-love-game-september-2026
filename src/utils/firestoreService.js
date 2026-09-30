@@ -25,22 +25,20 @@ export const addDocument = async (collectionName, data) => {
   }
 };
 
-export const updateDocument = async (collectionName, docId, data) => {
+export const updateDocument = async (path, data) => {
   try {
-    const docRef = doc(db, collectionName, docId);
-    await updateDoc(docRef, data);
+    await updateDoc(doc(db, path), data);
   } catch (error) {
-    console.error(`Грешка при обновяване в ${collectionName} с ID ${docId}:`, error);
+    console.error(`Грешка при обновяване на ${path}:`, error);
     throw error;
   }
 };
 
-export const deleteDocument = async (collectionName, docId) => {
+export const deleteDocument = async (path) => {
   try {
-    const docRef = doc(db, collectionName, docId);
-    await deleteDoc(docRef);
+    await deleteDoc(doc(db, path));
   } catch (error) {
-    console.error(`Грешка при изтриване от ${collectionName} с ID ${docId}:`, error);
+    console.error(`Грешка при изтриване на ${path}:`, error);
     throw error;
   }
 };

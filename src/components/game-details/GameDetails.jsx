@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { getDocument } from "../../utils/firestoreService";
+import { useNavigate, useParams } from "react-router";
+import { deleteDocument, getDocument } from "../../utils/firestoreService";
 
 export default function GameDetails() {
     const { gameId } = useParams();
+    const navigate = useNavigate();
     const [game, setGame] = useState({});
 
     useEffect(() => {
@@ -11,6 +12,23 @@ export default function GameDetails() {
             .then(setGame)
             .catch(err => alert(err.message));
     }, [gameId])
+
+    const deleteGameClickHandler = async (e) => {
+        e.preventDefault();
+
+        const confirmed = confirm(`Are you sure you want to delete ${game.title} game?`);
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            await deleteDocument(`games/${gameId}`);
+            navigate('/catalog');
+        } catch (err) {
+            alert(err.message);
+        }
+    }
 
     return (
         <section id="game-details">
@@ -49,7 +67,7 @@ export default function GameDetails() {
                     <a href="#" className="button">
                         Edit
                     </a>
-                    <a href="#" className="button">
+                    <a href="#" className="button" onClick={deleteGameClickHandler}>
                         Delete
                     </a>
                 </div>
