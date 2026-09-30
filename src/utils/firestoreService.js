@@ -1,5 +1,5 @@
 import { db } from '../firebase/firebaseConfig';
-import { collection, getDocs, getDoc, addDoc, doc, updateDoc, deleteDoc, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, getDoc, addDoc, doc, updateDoc, deleteDoc, orderBy, query, limit } from 'firebase/firestore';
 
 
 export const getDocuments = async (collectionName) => {
@@ -43,8 +43,11 @@ export const deleteDocument = async (path) => {
   }
 };
 
-export const getDocumentsOrdered = async (collectionName, field, direction = 'desc') => {
-  const q = query(collection(db, collectionName), orderBy(field, direction));
+export const getDocumentsOrdered = async (collectionName, field, direction = 'desc', max) => {
+  const constraints = [orderBy(field, direction)];
+  if (max) constraints.push(limit(max));
+
+  const q = query(collection(db, collectionName), ...constraints);
   const snapshot = await getDocs(q);
   return snapshot.docs.map(d => ({ id: d.id, ...d.data()}));
 }
