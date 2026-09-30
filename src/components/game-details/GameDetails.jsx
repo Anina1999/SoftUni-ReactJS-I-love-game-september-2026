@@ -8,9 +8,21 @@ export default function GameDetails() {
     const [game, setGame] = useState({});
 
     useEffect(() => {
-        getDocument(`games/${gameId}`)
+        const abortController = new AbortController();
+
+        getDocument(`games/${gameId}`, { signal: abortController.signal })
             .then(setGame)
-            .catch(err => alert(err.message));
+            .catch(err => {
+                if (err.name === 'AbortError') {
+                    return;
+                }
+                
+                alert(err.message);
+            });
+
+        return () => {
+            abortController.abort();
+        }
     }, [gameId])
 
     const deleteGameClickHandler = async (e) => {

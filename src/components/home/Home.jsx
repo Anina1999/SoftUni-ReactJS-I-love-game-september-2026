@@ -6,9 +6,21 @@ export default function Home() {
     const [latestGames, setLatestGames] = useState([]);
 
     useEffect(() => {
-        getDocumentsOrdered("games", "created_at", "desc", 3)
+        const abortController = new AbortController();
+
+        getDocumentsOrdered("games", "created_at", "desc", 3, { signal: abortController.signal })
             .then(setLatestGames)
-            .catch(err => alert(err.message));
+            .catch(err => {
+                if (err.name === 'AbortError') {
+                    return;
+                }
+                
+                alert(err.message);
+            });
+
+        return () => {
+            abortController.abort();
+        }
     }, [])
 
     return (

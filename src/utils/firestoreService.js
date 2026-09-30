@@ -43,24 +43,34 @@ export const deleteDocument = async (path) => {
   }
 };
 
-export const getDocumentsOrdered = async (collectionName, field, direction = 'desc', max) => {
+export const getDocumentsOrdered = async (collectionName, field, direction = 'desc', max, { signal } = {}) => {
+  signal?.throwIfAborted();
+
   const constraints = [orderBy(field, direction)];
   if (max) constraints.push(limit(max));
 
   const q = query(collection(db, collectionName), ...constraints);
   const snapshot = await getDocs(q);
+
+  signal?.throwIfAborted();
   return snapshot.docs.map(d => ({ id: d.id, ...d.data()}));
 }
 
-export const getDocument = async (path) => {
+export const getDocument = async (path, { signal } = {}) => {
   try {
+    signal?.throwIfAborted();
+
     const snapshot = await getDoc(doc(db, path));
+
+    signal?.throwIfAborted();
     if (!snapshot.exists()) {
       throw new Error(`Документът ${path} не съществува`);
     }
     return { id: snapshot.id, ...snapshot.data() };
   } catch (error) {
-    console.error(`Грешка при четене на ${path}:`, error);
+    if (error.name !== 'AbortError') {
+      console.error(`Грешка при четене на ${path}:`, error);
+    }
     throw error;
   }
 };
