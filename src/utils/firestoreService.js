@@ -1,5 +1,5 @@
 import { db } from '../firebase/firebaseConfig';
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, getDoc, addDoc, doc, updateDoc, deleteDoc, orderBy, query } from 'firebase/firestore';
 
 
 export const getDocuments = async (collectionName) => {
@@ -50,3 +50,16 @@ export const getDocumentsOrdered = async (collectionName, field, direction = 'de
   const snapshot = await getDocs(q);
   return snapshot.docs.map(d => ({ id: d.id, ...d.data()}));
 }
+
+export const getDocument = async (path) => {
+  try {
+    const snapshot = await getDoc(doc(db, path));
+    if (!snapshot.exists()) {
+      throw new Error(`Документът ${path} не съществува`);
+    }
+    return { id: snapshot.id, ...snapshot.data() };
+  } catch (error) {
+    console.error(`Грешка при четене на ${path}:`, error);
+    throw error;
+  }
+};
