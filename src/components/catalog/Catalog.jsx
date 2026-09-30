@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { getDocuments } from "../../utils/firestoreService";
+import { getDocumentsOrdered } from "../../utils/firestoreService";
 import GameCard from "../game-card/GameCard";
 
 export default function Catalog() {
     const [games, setGames] = useState([]);
 
     useEffect(() => {
-        getDocuments('games')
+        getDocumentsOrdered("games", "created_at")
             .then(setGames)
             .catch(err => alert(err.message));
     }, [])

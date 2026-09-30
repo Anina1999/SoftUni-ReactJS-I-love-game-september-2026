@@ -1,5 +1,5 @@
 import { db } from '../firebase/firebaseConfig';
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, orderBy, query } from 'firebase/firestore';
 
 
 export const getDocuments = async (collectionName) => {
@@ -44,3 +44,9 @@ export const deleteDocument = async (collectionName, docId) => {
     throw error;
   }
 };
+
+export const getDocumentsOrdered = async (collectionName, field, direction = 'desc') => {
+  const q = query(collection(db, collectionName), orderBy(field, direction));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(d => ({ id: d.id, ...d.data()}));
+}
