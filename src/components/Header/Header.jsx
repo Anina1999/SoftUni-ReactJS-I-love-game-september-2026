@@ -7,7 +7,7 @@ export default function Header({
         <header>
             {/* Navigation */}
             <nav>
-                <Link to="/" className="home"> <img src="./images/logo.png" alt="logo" /></Link>
+                <Link to="/" className="home"> <img src="/images/logo.png" alt="logo" /></Link>
                 <Link to="/catalog">Catalog</Link>
                 {isAuthenticated 
                 ? ( 

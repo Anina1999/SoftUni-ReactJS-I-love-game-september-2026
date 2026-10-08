@@ -3,7 +3,8 @@ import { serverTimestamp } from "firebase/firestore";
 import { addDocument } from "../../utils/firestoreService";
 
 export default function CreateComment({
-    user
+    user,
+    onCreate
 }) {
     const { gameId } = useParams();
 
@@ -16,12 +17,18 @@ export default function CreateComment({
         }
 
         try {
-            await addDocument("comments", {
+            const commentData = {
                 game_id: gameId,
                 author: user?.email,
                 text,
+            };
+
+            const commentId = await addDocument("comments", {
+                ...commentData,
                 created_at: serverTimestamp(),
             });
+
+            onCreate({ id: commentId, ...commentData });
         } catch (err) {
             alert(err.message);
         }

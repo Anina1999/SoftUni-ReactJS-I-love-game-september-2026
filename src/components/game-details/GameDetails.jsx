@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import { deleteDocument, getDocument } from "../../utils/firestoreService";
+import { deleteDocument, getDocument, getDocumentsWhere } from "../../utils/firestoreService";
 import CreateComment from "../create-comment/CreateComment";
 import CommentsList from "../comments-list/CommentsList";
 
@@ -10,6 +10,7 @@ export default function GameDetails({
     const { gameId } = useParams();
     const navigate = useNavigate();
     const [game, setGame] = useState({});
+    const [comments, setComments] = useState([]);
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -24,10 +25,24 @@ export default function GameDetails({
                 alert(err.message);
             });
 
+        getDocumentsWhere("comments", "game_id", gameId, { signal: abortController.signal })
+            .then(setComments)
+            .catch(err => {
+                if (err.name === 'AbortError') {
+                    return;
+                }
+
+                alert(err.message);
+            });
+
         return () => {
             abortController.abort();
         }
     }, [gameId])
+
+    const commentCreateHandler = (newComment) => {
+        setComments(state => [...state, newComment]);
+    }
 
     const deleteGameClickHandler = async (e) => {
         e.preventDefault();
@@ -87,10 +102,10 @@ export default function GameDetails({
                         Delete
                     </a>
                 </div>
-                < CommentsList />
+                <CommentsList comments={comments} />
             </div>
             {/* Add Comment ( Only for logged-in users, which is not creators of the current game ) */}
-            {user && <CreateComment user={user} />}
+            {user && <CreateComment user={user} onCreate={commentCreateHandler} />}
         </section>
 
     );
