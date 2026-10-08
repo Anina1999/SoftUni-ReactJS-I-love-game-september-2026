@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Route, Routes } from "react-router"
 import Footer from "./components/Footer/Footer"
 import Header from "./components/Header/Header"
@@ -8,16 +9,24 @@ import GameCreate from "./components/game-create/GameCreate"
 import Register from "./components/register/Register"
 
 function App() {
+    const [user, setUser] = useState(null);
+
+    const userAuthHandler = (userData) => {
+        setUser(userData);
+    }
+
     return (
         <>
             <Header />
+
+            {user && <p>Welcome, {user.email}!</p>}
 
             <Routes>
                 <Route index path="/" element={<Home />} />
                 <Route path="/catalog" element={<Catalog />} />
                 <Route path="/games/:gameId" element={<GameDetails />} />
                 <Route path="/games/create" element={<GameCreate />} />
-                <Route path="/register" element={<Register />} />
+                <Route path="/register" element={<Register onRegister={userAuthHandler}/>} />
             </Routes>
             
             <Footer />
