@@ -1,5 +1,5 @@
 import { db } from '../firebase/firebaseConfig';
-import { collection, getDocs, getDoc, addDoc, doc, updateDoc, deleteDoc, orderBy, query, limit } from 'firebase/firestore';
+import { collection, getDocs, getDoc, addDoc, doc, updateDoc, deleteDoc, orderBy, query, limit, where } from 'firebase/firestore';
 
 
 export const getDocuments = async (collectionName) => {
@@ -13,6 +13,20 @@ export const getDocuments = async (collectionName) => {
     console.error(`Грешка при четене от ${collectionName}:`, error);
     throw error;
   }
+};
+
+export const getDocumentsWhere = async (collectionName, field, value, { signal } = {}) => {
+  signal?.throwIfAborted();
+
+  const q = query(
+    collection(db, collectionName),
+    where(field, '==', value),
+    orderBy('created_at', 'asc')
+  );
+  const snapshot = await getDocs(q);
+
+  signal?.throwIfAborted();
+  return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 };
 
 export const addDocument = async (collectionName, data) => {
