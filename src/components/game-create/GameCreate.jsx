@@ -1,7 +1,45 @@
+import { useState } from "react";
+import { addDocument } from "../../utils/firestoreService";
+import { serverTimestamp } from "firebase/firestore";
+import { useNavigate } from "react-router";
+
+const initialValues = {
+    title: "",
+    genre: "",
+    activePlayers: "",
+    releaseDate: "",
+    imageUrl: "",
+    summary: ""
+}
+
 export default function GameCreate() {
+    const navigate = useNavigate();
+    const [values, setValues] = useState(initialValues);
+
+    const changeHandler = (e) => {
+        setValues(state => ({
+            ...state,   
+            [e.target.name]: e.target.value
+        }))
+    };
+
+    const submitAction = async () => {
+        try {
+            await addDocument("games", {
+                ...values,
+                activePlayers: Number(values.activePlayers),
+                created_at: serverTimestamp(),
+            });
+
+            navigate('/catalog');
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
     return (
         <section id="add-page">
-            <form id="add-new-game">
+            <form id="add-new-game" action={submitAction}>
                 <div className="container">
                     <h1>Add New Game</h1>
                     <div className="form-group-half">
@@ -9,8 +47,10 @@ export default function GameCreate() {
                         <input
                             type="text"
                             id="gameName"
-                            name="gameName"
+                            name="title"
                             placeholder="Enter game title..."
+                            value={values.title}
+                            onChange={changeHandler}
                         />
                     </div>
                     <div className="form-group-half">
@@ -20,6 +60,8 @@ export default function GameCreate() {
                             id="genre"
                             name="genre"
                             placeholder="Enter game genre..."
+                            value={values.genre}
+                            onChange={changeHandler}
                         />
                     </div>
                     <div className="form-group-half">
@@ -30,11 +72,13 @@ export default function GameCreate() {
                             name="activePlayers"
                             min={0}
                             placeholder={0}
+                            value={values.activePlayers}
+                            onChange={changeHandler}
                         />
                     </div>
                     <div className="form-group-half">
                         <label htmlFor="releaseDate">Release Date:</label>
-                        <input type="date" id="releaseDate" name="releaseDate" />
+                        <input type="date" id="releaseDate" name="releaseDate" value={values.releaseDate} onChange={changeHandler} />
                     </div>
                     <div className="form-group-full">
                         <label htmlFor="imageUrl">Image URL:</label>
@@ -43,6 +87,8 @@ export default function GameCreate() {
                             id="imageUrl"
                             name="imageUrl"
                             placeholder="Enter image URL..."
+                            value={values.imageUrl}
+                            onChange={changeHandler}
                         />
                     </div>
                     <div className="form-group-full">
@@ -52,10 +98,11 @@ export default function GameCreate() {
                             id="summary"
                             rows={5}
                             placeholder="Write a brief summary..."
-                            defaultValue={""}
+                            value={values.summary}
+                            onChange={changeHandler}
                         />
                     </div>
-                    <input className="btn submit" type="submit" defaultValue="ADD GAME" />
+                    <input className="btn submit" type="submit" value="ADD GAME" />
                 </div>
             </form>
         </section>
