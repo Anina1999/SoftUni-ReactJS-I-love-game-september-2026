@@ -15,6 +15,8 @@ const initialValues = {
 export default function GameCreate() {
     const navigate = useNavigate();
     const [values, setValues] = useState(initialValues);
+    const [previewUrl, setPreviewUrl] = useState(null);
+    const [isFileUpload, setIsFileUpload] = useState(false);
 
     const changeHandler = (e) => {
         setValues(state => ({
@@ -23,7 +25,7 @@ export default function GameCreate() {
         }))
     };
 
-    const submitAction = async () => {
+    const submitAction = async (formData) => {
         try {
             await addDocument("games", {
                 ...values,
@@ -35,6 +37,15 @@ export default function GameCreate() {
         } catch (err) {
             alert(err.message);
         }
+    }
+
+    const fileChangeHandler = (e) => {
+        //get file metadata on change
+        const file = e.target.files[0];
+
+        const previewUrl = URL.createObjectURL(file);
+
+        setPreviewUrl(previewUrl);
     }
 
     return (
@@ -80,17 +91,35 @@ export default function GameCreate() {
                         <label htmlFor="releaseDate">Release Date:</label>
                         <input type="date" id="releaseDate" name="releaseDate" value={values.releaseDate} onChange={changeHandler} />
                     </div>
-                    <div className="form-group-full">
-                        <label htmlFor="imageUrl">Image URL:</label>
-                        <input
-                            type="text"
-                            id="imageUrl"
-                            name="imageUrl"
-                            placeholder="Enter image URL..."
-                            value={values.imageUrl}
-                            onChange={changeHandler}
-                        />
+                    <div className="form-group-half">
+                        <label htmlFor="toggleFileUpload">Set File Upload</label>
+                        <input type="checkbox" id="toggleFileUpload" name="toggleFileUpload" checked={isFileUpload} onChange={() => setIsFileUpload(!isFileUpload)} />
                     </div>
+                    {isFileUpload 
+                        ?   (<div className="form-group-half">
+                                <label htmlFor="fileUpload">Upload File:</label>
+                                <input
+                                    type="file"
+                                    id="fileUpload"
+                                    name="image"
+                                    onChange={fileChangeHandler}
+                                />
+                                {previewUrl && <img src={previewUrl} alt="preview"/>}
+                            </div>
+                        ) : (
+                            <div className="form-group-half">
+                                <label htmlFor="imageUrl">Image URL:</label>
+                                <input
+                                    type="text"
+                                    id="imageUrl"
+                                    name="imageUrl"
+                                    placeholder="Enter image URL..."
+                                    value={values.imageUrl}
+                                    onChange={changeHandler}
+                                />
+                            </div>
+                        )}
+                    
                     <div className="form-group-full">
                         <label htmlFor="summary">Summary:</label>
                         <textarea
