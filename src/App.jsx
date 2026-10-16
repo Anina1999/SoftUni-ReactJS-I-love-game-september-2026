@@ -11,6 +11,7 @@ import Logout from "./components/logout/Logout";
 import GameEdit from "./components/game-edit/GameEdit";
 import { authApi } from "./components/api";
 import useAuth from "./hooks/useAuth";
+import AuthContext from "./contexts/auth-context"
 
 function App() {
 
@@ -55,8 +56,16 @@ function App() {
         return null;
     }
 
+    const authContextValue = {
+        user,
+        isAuthenticated: !!user,
+        register,
+        login,
+        logout: logoutAction,
+    };
+
     return (
-        <>
+        <AuthContext.Provider value={authContextValue}>
             <Header isAuthenticated={!!user} />
 
             <Routes>
@@ -71,7 +80,7 @@ function App() {
             </Routes>
             
             <Footer />
-        </>
+        </AuthContext.Provider>
 
     )
 }

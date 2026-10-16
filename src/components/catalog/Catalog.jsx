@@ -6,7 +6,7 @@ export default function Catalog() {
     const [games, setGames] = useState([]);
 
     useEffect(() => {
-        gamesApi.getAll
+        gamesApi.getAll()
             .then(setGames)
             .catch(err => alert(err.message));
     }, [])
