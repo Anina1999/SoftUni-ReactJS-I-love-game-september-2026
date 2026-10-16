@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Route, Routes } from "react-router"
 import Footer from "./components/Footer/Footer"
 import Header from "./components/Header/Header"
@@ -10,17 +9,28 @@ import Register from "./components/register/Register"
 import Login from "./components/login/Login";
 import Logout from "./components/logout/Logout";
 import GameEdit from "./components/game-edit/GameEdit";
+import { authApi } from "./components/api";
+import useAuth from "./hooks/useAuth";
 
 function App() {
 
-    const [user, setUser] = useState(null);
+    const { user, setUser, isAuthReady } = useAuth();
 
     const register = (userData) => {
         setUser(userData);
     }
 
-    const logoutAction = () => {
-        setUser(null);
+    const logoutAction = async () => {
+        try {
+            await authApi.logout();
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    //wait until Firebase checks if there is a logged in user
+    if (!isAuthReady) {
+        return null;
     }
 
     return (
