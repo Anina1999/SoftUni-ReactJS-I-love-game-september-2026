@@ -25,7 +25,7 @@ export default function GameCreate() {
         }))
     };
 
-    const submitAction = async (formData) => {
+    const submitAction = async () => {
         try {
             await addDocument("games", {
                 ...values,

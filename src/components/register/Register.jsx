@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+import { register } from "../api/auth-api";
 
 export default function Register({
     onRegister,
@@ -6,7 +7,7 @@ export default function Register({
     
     const navigate = useNavigate();
 
-    const registerAction = (formData) => {
+    const registerAction = async (formData) => {
 
         const email = formData.get("email");
         const password = formData.get("password");
@@ -23,10 +24,16 @@ export default function Register({
             return;
         }
 
-        onRegister({ email }); 
+        try {
+            const user = await register(email, password);
 
-        //redirect to home page
-        navigate("/");
+            onRegister(user);
+
+            //redirect to home page
+            navigate("/");
+        } catch (error) {
+            alert(error.message);
+        }
     };
 
     return (
