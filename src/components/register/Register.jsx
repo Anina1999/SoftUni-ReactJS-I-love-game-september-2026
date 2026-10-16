@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { register } from "../api/auth-api";
+import { authApi } from "../api";
 
 export default function Register({
     onRegister,
@@ -25,7 +25,7 @@ export default function Register({
         }
 
         try {
-            const user = await register(email, password);
+            const user = await authApi.register(email, password);
 
             onRegister(user);
 

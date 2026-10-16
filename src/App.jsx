@@ -15,7 +15,7 @@ function App() {
 
     const [user, setUser] = useState(null);
 
-    const userAuthHandler = (userData) => {
+    const register = (userData) => {
         setUser(userData);
     }
 
@@ -33,8 +33,8 @@ function App() {
                 <Route path="/games/:gameId" element={<GameDetails user={user} />} />
                 <Route path="/games/create" element={<GameCreate />} />
                 <Route path="/games/:gameId/edit" element={<GameEdit />} />
-                <Route path="/register" element={<Register onRegister={userAuthHandler}/>} />
-                <Route path="/login" element={<Login onLogin={userAuthHandler}/>} />
+                <Route path="/register" element={<Register onRegister={register}/>} />
+                <Route path="/login" element={<Login onLogin={register}/>} />
                 <Route path="/logout" element={<Logout onLogout={logoutAction} />} />
             </Routes>
             
