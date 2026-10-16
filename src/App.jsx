@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router"
+import { Route, Routes, useNavigate } from "react-router"
 import Footer from "./components/Footer/Footer"
 import Header from "./components/Header/Header"
 import Home from "./components/home/Home"
@@ -14,10 +14,32 @@ import useAuth from "./hooks/useAuth";
 
 function App() {
 
+    const navigate = useNavigate();
+
     const { user, setUser, isAuthReady } = useAuth();
 
-    const register = (userData) => {
-        setUser(userData);
+    const register = async (userData) => {
+        try {
+            const result = await authApi.register(userData);
+
+            setUser(result);
+
+            navigate("/");
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    const login = async (userData) => {
+        try {
+            const result = await authApi.login(userData);
+
+            setUser(result);
+
+            navigate("/");
+        } catch (error) {
+            alert(error.message);
+        }
     }
 
     const logoutAction = async () => {
@@ -44,7 +66,7 @@ function App() {
                 <Route path="/games/create" element={<GameCreate />} />
                 <Route path="/games/:gameId/edit" element={<GameEdit />} />
                 <Route path="/register" element={<Register onRegister={register}/>} />
-                <Route path="/login" element={<Login onLogin={register}/>} />
+                <Route path="/login" element={<Login onLogin={login}/>} />
                 <Route path="/logout" element={<Logout onLogout={logoutAction} />} />
             </Routes>
             

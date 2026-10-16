@@ -1,13 +1,8 @@
-import { useNavigate } from "react-router";
-import { authApi } from "../api";
-
 export default function Register({
     onRegister,
 }) {
-    
-    const navigate = useNavigate();
 
-    const registerAction = async (formData) => {
+    const registerAction = (formData) => {
 
         const email = formData.get("email");
         const password = formData.get("password");
@@ -24,16 +19,7 @@ export default function Register({
             return;
         }
 
-        try {
-            const user = await authApi.register(email, password);
-
-            onRegister(user);
-
-            //redirect to home page
-            navigate("/");
-        } catch (error) {
-            alert(error.message);
-        }
+        onRegister({ email, password });
     };
 
     return (
