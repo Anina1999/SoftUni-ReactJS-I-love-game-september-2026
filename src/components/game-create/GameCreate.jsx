@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { addDocument } from "../../utils/firestoreService";
-import { serverTimestamp } from "firebase/firestore";
-import { useNavigate } from "react-router";
+import { useContext, useState } from "react";
+import { Navigate, useNavigate } from "react-router";
+import { gamesApi } from "../api";
+import AuthContext from "../../contexts/auth-context";
 
 const initialValues = {
     title: "",
@@ -14,6 +14,7 @@ const initialValues = {
 
 export default function GameCreate() {
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
     const [values, setValues] = useState(initialValues);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [isFileUpload, setIsFileUpload] = useState(false);
@@ -27,10 +28,10 @@ export default function GameCreate() {
 
     const submitAction = async () => {
         try {
-            await addDocument("games", {
+            await gamesApi.create({
                 ...values,
                 activePlayers: Number(values.activePlayers),
-                created_at: serverTimestamp(),
+                ownerId: user.uid,
             });
 
             navigate('/catalog');
@@ -46,6 +47,11 @@ export default function GameCreate() {
         const previewUrl = URL.createObjectURL(file);
 
         setPreviewUrl(previewUrl);
+    }
+
+    //only logged in users can create games
+    if (!user) {
+        return <Navigate to="/login" />;
     }
 
     return (
