@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
-import { getDocument, updateDocument } from "../../utils/firestoreService";
+import { useContext, useEffect, useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router";
+import { gamesApi } from "../api";
+import AuthContext from "../../contexts/auth-context";
 
 const initialValues = {
     title: "",
@@ -14,12 +15,13 @@ const initialValues = {
 export default function GameEdit() {
     const { gameId } = useParams();
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
     const [values, setValues] = useState(initialValues);
 
     useEffect(() => {
         const abortController = new AbortController();
 
-        getDocument(`games/${gameId}`, { signal: abortController.signal })
+        gamesApi.getOne(gameId, { signal: abortController.signal })
             .then(game => setValues({
                 title: game.title,
                 genre: game.genre,
@@ -50,7 +52,7 @@ export default function GameEdit() {
 
     const editAction = async () => {
         try {
-            await updateDocument(`games/${gameId}`, {
+            await gamesApi.edit(gameId, {
                 ...values,
                 activePlayers: Number(values.activePlayers),
             });
@@ -60,6 +62,11 @@ export default function GameEdit() {
             alert(err.message);
         }
     };
+
+    //only logged in users can edit games
+    if (!user) {
+        return <Navigate to="/login" />;
+    }
 
     return (
         <section id="edit-page">

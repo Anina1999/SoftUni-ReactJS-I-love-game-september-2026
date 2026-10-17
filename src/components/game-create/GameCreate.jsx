@@ -31,7 +31,7 @@ export default function GameCreate() {
             await gamesApi.create({
                 ...values,
                 activePlayers: Number(values.activePlayers),
-                ownerId: user.uid,
+                user_id: user.uid,
             });
 
             navigate('/catalog');
