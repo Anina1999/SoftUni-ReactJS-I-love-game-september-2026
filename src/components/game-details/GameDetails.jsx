@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import { getDocument, getDocumentsWhere } from "../../utils/firestoreService";
+import { getDocumentsWhere } from "../../utils/firestoreService";
 import { gamesApi } from "../api";
 import CreateComment from "../create-comment/CreateComment";
 import CommentsList from "../comments-list/CommentsList";
@@ -16,7 +16,7 @@ export default function GameDetails({
     useEffect(() => {
         const abortController = new AbortController();
 
-        getDocument(`games/${gameId}`, { signal: abortController.signal })
+        gamesApi.getOne(gameId, { signal: abortController.signal })
             .then(setGame)
             .catch(err => {
                 if (err.name === 'AbortError') {
