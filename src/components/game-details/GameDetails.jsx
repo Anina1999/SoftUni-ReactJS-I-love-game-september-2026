@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import { deleteDocument, getDocument, getDocumentsWhere } from "../../utils/firestoreService";
+import { getDocument, getDocumentsWhere } from "../../utils/firestoreService";
+import { gamesApi } from "../api";
 import CreateComment from "../create-comment/CreateComment";
 import CommentsList from "../comments-list/CommentsList";
 
@@ -54,7 +55,7 @@ export default function GameDetails({
         }
 
         try {
-            await deleteDocument(`games/${gameId}`);
+            await gamesApi.remove(gameId);
             navigate('/catalog');
         } catch (err) {
             alert(err.message);

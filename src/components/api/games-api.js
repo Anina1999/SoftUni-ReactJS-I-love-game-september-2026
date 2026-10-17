@@ -1,6 +1,7 @@
 import { serverTimestamp } from 'firebase/firestore';
 import {
   addDocument,
+  deleteDocument,
   getDocument,
   getDocumentsOrdered,
   updateDocument,
@@ -25,4 +26,8 @@ export const create = async (gameData) => {
 
 export const edit = async (gameId, gameData) => {
   return updateDocument(`${COLLECTION}/${gameId}`, gameData);
+};
+
+export const remove = async (gameId) => {
+  return deleteDocument(`${COLLECTION}/${gameId}`);
 };
