@@ -18,7 +18,8 @@ export default function CreateComment({
         try {
             const commentData = {
                 game_id: gameId,
-                author: user?.email,
+                user_id: user.uid,
+                author: user.email,
                 text,
             };
 
