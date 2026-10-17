@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDocumentsOrdered } from "../../utils/firestoreService";
+import { gamesApi } from "../api";
 import GameCard from "../game-card/GameCard";
 
 export default function Home() {
@@ -8,7 +8,7 @@ export default function Home() {
     useEffect(() => {
         const abortController = new AbortController();
 
-        getDocumentsOrdered("games", "created_at", "desc", 3, { signal: abortController.signal })
+        gamesApi.getLatest(3, { signal: abortController.signal })
             .then(setLatestGames)
             .catch(err => {
                 if (err.name === 'AbortError') {

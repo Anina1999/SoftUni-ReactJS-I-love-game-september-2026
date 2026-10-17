@@ -13,6 +13,10 @@ export const getAll = async ({ signal } = {}) => {
   return getDocumentsOrdered(COLLECTION, 'created_at', 'desc', undefined, { signal });
 };
 
+export const getLatest = async (count = 3, { signal } = {}) => {
+  return getDocumentsOrdered(COLLECTION, 'created_at', 'desc', count, { signal });
+};
+
 export const getOne = async (gameId, { signal } = {}) => {
   return getDocument(`${COLLECTION}/${gameId}`, { signal });
 };
