@@ -110,7 +110,7 @@ export default function GameDetails({
                 <CommentsList comments={comments} />
             </div>
             {/* Add Comment ( Only for logged-in users, which is not creators of the current game ) */}
-            {user && <CreateComment user={user} onCreate={commentCreateHandler} />}
+            {user && !isOwner && <CreateComment user={user} onCreate={commentCreateHandler} />}
         </section>
 
     );
