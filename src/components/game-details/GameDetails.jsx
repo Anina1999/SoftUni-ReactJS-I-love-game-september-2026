@@ -40,6 +40,9 @@ export default function GameDetails({
         }
     }, [gameId])
 
+    //!!user is needed: for a guest before the game loads both sides are undefined
+    const isOwner = !!user && user.uid === game.user_id;
+
     const commentCreateHandler = (newComment) => {
         setComments(state => [...state, newComment]);
     }
@@ -94,14 +97,16 @@ export default function GameDetails({
                     </div>
                 </div>
                 {/* Edit/Delete buttons ( Only for creator of this game )  */}
-                <div className="buttons">
-                    <Link to={`/games/${gameId}/edit`} className="button">
-                        Edit
-                    </Link>
-                    <a href="#" className="button" onClick={deleteGameClickHandler}>
-                        Delete
-                    </a>
-                </div>
+                {isOwner && (
+                    <div className="buttons">
+                        <Link to={`/games/${gameId}/edit`} className="button">
+                            Edit
+                        </Link>
+                        <a href="#" className="button" onClick={deleteGameClickHandler}>
+                            Delete
+                        </a>
+                    </div>
+                )}
                 <CommentsList comments={comments} />
             </div>
             {/* Add Comment ( Only for logged-in users, which is not creators of the current game ) */}
