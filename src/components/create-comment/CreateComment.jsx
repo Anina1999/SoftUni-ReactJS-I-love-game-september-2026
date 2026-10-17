@@ -1,6 +1,5 @@
 import { useParams } from "react-router";
-import { serverTimestamp } from "firebase/firestore";
-import { addDocument } from "../../utils/firestoreService";
+import { commentsApi } from "../api";
 
 export default function CreateComment({
     user,
@@ -23,10 +22,7 @@ export default function CreateComment({
                 text,
             };
 
-            const commentId = await addDocument("comments", {
-                ...commentData,
-                created_at: serverTimestamp(),
-            });
+            const commentId = await commentsApi.create(commentData);
 
             onCreate({ id: commentId, ...commentData });
         } catch (err) {
