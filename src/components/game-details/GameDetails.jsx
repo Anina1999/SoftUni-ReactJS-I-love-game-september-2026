@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { commentsApi, gamesApi } from "../api";
 import CreateComment from "../create-comment/CreateComment";
 import CommentsList from "../comments-list/CommentsList";
 import useAuth from "../../hooks/useAuth";
+import commentsReducer, { COMMENTS_ACTIONS } from "./commentsReducer";
 
 export default function GameDetails() {
     const { user } = useAuth();
     const { gameId } = useParams();
     const navigate = useNavigate();
     const [game, setGame] = useState({});
-    const [comments, setComments] = useState([]);
+    const [comments, dispatch] = useReducer(commentsReducer, []);
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -26,7 +27,7 @@ export default function GameDetails() {
             });
 
         commentsApi.getAll(gameId, { signal: abortController.signal })
-            .then(setComments)
+            .then(result => dispatch({ type: COMMENTS_ACTIONS.GET_ALL, payload: result }))
             .catch(err => {
                 if (err.name === 'AbortError') {
                     return;
@@ -44,7 +45,7 @@ export default function GameDetails() {
     const isOwner = !!user && user.uid === game.user_id;
 
     const commentCreateHandler = (newComment) => {
-        setComments(state => [...state, newComment]);
+        dispatch({ type: COMMENTS_ACTIONS.ADD, payload: newComment });
     }
 
     const deleteGameClickHandler = async (e) => {
