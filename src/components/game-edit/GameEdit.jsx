@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router";
 import { gamesApi } from "../api";
-import AuthContext from "../../contexts/auth-context";
+import useAuth from "../../hooks/useAuth";
 
 const initialValues = {
     title: "",
@@ -15,7 +15,7 @@ const initialValues = {
 export default function GameEdit() {
     const { gameId } = useParams();
     const navigate = useNavigate();
-    const { user } = useContext(AuthContext);
+    const { user } = useAuth();
     const [values, setValues] = useState(initialValues);
 
     useEffect(() => {
