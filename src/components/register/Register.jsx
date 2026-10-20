@@ -1,6 +1,7 @@
-export default function Register({
-    onRegister,
-}) {
+import useAuth from "../../hooks/useAuth";
+
+export default function Register() {
+    const { register } = useAuth();
 
     const registerAction = (formData) => {
 
@@ -19,7 +20,7 @@ export default function Register({
             return;
         }
 
-        onRegister({ email, password });
+        register({ email, password });
     };
 
     return (

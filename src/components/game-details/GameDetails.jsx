@@ -3,10 +3,10 @@ import { Link, useNavigate, useParams } from "react-router";
 import { commentsApi, gamesApi } from "../api";
 import CreateComment from "../create-comment/CreateComment";
 import CommentsList from "../comments-list/CommentsList";
+import useAuth from "../../hooks/useAuth";
 
-export default function GameDetails({
-    user
-}) {
+export default function GameDetails() {
+    const { user } = useAuth();
     const { gameId } = useParams();
     const navigate = useNavigate();
     const [game, setGame] = useState({});
