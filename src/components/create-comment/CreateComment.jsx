@@ -3,6 +3,7 @@ import { commentsApi } from "../api";
 
 export default function CreateComment({
     user,
+    onCreateStart,
     onCreate
 }) {
     const { gameId } = useParams();
@@ -22,6 +23,9 @@ export default function CreateComment({
                 author: user.email,
                 text,
             };
+
+            //show the comment right away, React removes it if the request fails
+            onCreateStart(commentData);
 
             const commentId = await commentsApi.create(commentData);
 

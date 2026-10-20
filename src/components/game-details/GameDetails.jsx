@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { startTransition, useEffect, useOptimistic, useReducer, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { commentsApi, gamesApi } from "../api";
 import CreateComment from "../create-comment/CreateComment";
@@ -12,6 +12,8 @@ export default function GameDetails() {
     const navigate = useNavigate();
     const [game, setGame] = useState({});
     const [comments, dispatch] = useReducer(commentsReducer, []);
+    //shows a new comment immediately, while the request is still running
+    const [optimisticComments, dispatchOptimistic] = useOptimistic(comments, commentsReducer);
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -44,8 +46,19 @@ export default function GameDetails() {
     //!!user is needed: for a guest before the game loads both sides are undefined
     const isOwner = !!user && user.uid === game.user_id;
 
+    const commentCreateStartHandler = (commentData) => {
+        //temporary id for the key, the real one comes from the server
+        dispatchOptimistic({
+            type: COMMENTS_ACTIONS.ADD,
+            payload: { id: crypto.randomUUID(), ...commentData, pending: true },
+        });
+    }
+
     const commentCreateHandler = (newComment) => {
-        dispatch({ type: COMMENTS_ACTIONS.ADD, payload: newComment });
+        //in a transition, so the real comment replaces the optimistic one without a duplicate
+        startTransition(() => {
+            dispatch({ type: COMMENTS_ACTIONS.ADD, payload: newComment });
+        });
     }
 
     const deleteGameClickHandler = async (e) => {
@@ -108,10 +121,14 @@ export default function GameDetails() {
                         </a>
                     </div>
                 )}
-                <CommentsList comments={comments} />
+                <CommentsList comments={optimisticComments} />
             </div>
             {/* Add Comment ( Only for logged-in users, which is not creators of the current game ) */}
-            {user && !isOwner && <CreateComment user={user} onCreate={commentCreateHandler} />}
+            {user && !isOwner && <CreateComment
+                user={user}
+                onCreateStart={commentCreateStartHandler}
+                onCreate={commentCreateHandler}
+            />}
         </section>
 
     );
